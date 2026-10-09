@@ -1,0 +1,71 @@
+class ExploradorRecursivo:
+    # [10 pts] Definición clara de casos base y recursivos en comentarios
+
+    def imprimir_arbol(self, sistema, nivel=0):
+        """
+        Caso base: si el contenido no es un diccionario, se imprime directamente.
+        Caso recursivo: si el contenido es un diccionario, se llama de nuevo aumentando el nivel.
+        """
+        for nombre, contenido in sistema.items():
+            print("  " * nivel + str(nombre))
+            if isinstance(contenido, dict):
+                self.imprimir_arbol(contenido, nivel + 1)
+
+    def buscar_archivo(self, sistema, nombre, ruta=""):
+        """
+        Caso base: si el valor no es un diccionario, se compara directamente con el nombre.
+        Caso recursivo: si el valor es un diccionario, se busca dentro de él.
+        """
+        for clave, valor in sistema.items():
+            nueva_ruta = ruta + "/" + clave
+            if isinstance(valor, dict):
+                resultado = self.buscar_archivo(valor, nombre, nueva_ruta)
+                if resultado:
+                    return resultado
+            else:
+                if clave == nombre:
+                    return nueva_ruta
+        return None
+
+    def contar_archivos(self, sistema):
+        """
+        Caso base: si el valor no es un diccionario, se cuenta como archivo.
+        Caso recursivo: si el valor es un diccionario, se cuenta dentro de él.
+        """
+        total = 0
+        for clave, valor in sistema.items():
+            if isinstance(valor, dict):
+                total += self.contar_archivos(valor)
+            else:
+                total += 1
+        return total
+
+
+# Ejemplo de estructura de archivos
+sistema_archivos = {
+    "Documentos": {
+        "apuntes.txt": "10kb",
+        "fotos": {
+            "vacaciones.png": "2mb",
+            "perro.jpg": "1mb"
+        }
+    },
+    "sistema.dll": "500kb"
+}
+
+# Crear objeto explorador
+explorador = ExploradorRecursivo()
+
+# [30 pts] Imprimir árbol con indentación
+print("Árbol del sistema de archivos:")
+explorador.imprimir_arbol(sistema_archivos)
+
+# [30 pts] Buscar archivo en profundidad
+print("\n Buscar archivo 'perro.jpg':")
+print(explorador.buscar_archivo(sistema_archivos, "perro.jpg"))
+
+# [20 pts] Contar archivos
+print("\n Total de archivos:")
+print(explorador.contar_archivos(sistema_archivos))
+
+
